@@ -1,42 +1,42 @@
-#ifndef Cube_H
-#define Cube_H
+#ifndef PLANETARY_SYSTEM_H
+#define PLANETARY_SYSTEM_H
 
 #include <QGLWidget>
 #include <QToolButton>
 
 
-class VertexPoints : public QObject{
-    Q_OBJECT
-
+class Planet
+{
 public:
-    VertexPoints(GLfloat x, GLfloat y, GLfloat z, const QColor &color) : vertex({x, y, z}),
-       color(color) {}
     QColor color;
     GLfloat vertex[3];
 
-public slots:
+    Planet(GLfloat x, GLfloat y, GLfloat z, const QColor &color) : vertex({x, y, z}),
+       color(color) {}
+    void draw();
+
+
 
 };
 
 
-class Cube : public QGLWidget
+class PlanetarySystem : public QGLWidget
 {
     Q_OBJECT
 
 public:
-    Cube(QWidget *parent = 0);
-    ~Cube();
+    PlanetarySystem(QWidget *parent = 0);
+    ~PlanetarySystem();
 
 protected:
     void initializeGL();
     void resizeGL(int width, int height);
     void paintGL();
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+//    void mousePressEvent(QMouseEvent *event);
+//    void mouseMoveEvent(QMouseEvent *event);
 //    void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
-    VertexPoints *Point[8];
     void draw();
     int faceAtPosition(const QPoint &pos);
 
@@ -45,10 +45,8 @@ private:
     GLfloat rotationZ;
     QColor faceColors[4];
     QPoint lastPos;
+    Planet *sun;
 
-public slots:
-    void ChangeVertexCoordinates(const double x, const double y, const double z, const int widgetNumber);
-    void ChangeVertexColor(const QColor &color, const int widgetNumber);
 };
 
-#endif
+#endif //PLANETARY_SYSTEM_H

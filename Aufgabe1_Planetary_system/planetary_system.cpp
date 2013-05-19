@@ -2,37 +2,41 @@
 #include <QtOpenGL>
 #include <GL/glu.h>
 
-#include "cube.h"
+#include "planetary_system.h"
 
 
+void Planet::draw()
+{
+    glLoadIdentity();
+
+    glLineWidth(3.0);
+    glColor3f(1, 0, 0);
+
+    glBegin(GL_LINE_LOOP);
+        GLUquadric *quadric = gluNewQuadric();
+        gluQuadricDrawStyle(quadric, GLU_FILL);
+        gluSphere(quadric, 15, 50, 50);
+        gluDeleteQuadric(quadric);
+        glEndList();
+    glEnd();
+
+    glTranslatef(0, 0, -5);
+}
 
 
-Cube::Cube(QWidget *parent)
-    : QGLWidget(parent)
+PlanetarySystem::PlanetarySystem(QWidget *parent)
+    : QGLWidget(parent), sun(new Planet(0, 0, 0, Qt::yellow))
 {
     setFormat(QGLFormat(QGL::DoubleBuffer | QGL::DepthBuffer));
 
-    rotationX = -21.0;
-    rotationY = -57.0;
-    rotationZ = 0.0;
-
-    Point[0] = new VertexPoints(-1.0, -1.0, 1.0, Qt::green);   //  4,8 .---. 3,7
-    Point[1] = new VertexPoints(1.0, -1.0, 1.0, Qt::blue);     //      |   |
-    Point[2] = new VertexPoints(1.0, 1.0, 1.0 , Qt::red);      //  1,5 .---. 2,6
-    Point[3] = new VertexPoints(-1.0, 1.0, 1.0, Qt::yellow);
-
-    Point[4] = new VertexPoints(-1.0, -1.0, -1.0, Qt::red);
-    Point[5] = new VertexPoints(1.0, -1.0, -1.0, Qt::yellow);
-    Point[6] = new VertexPoints(1.0, 1.0, -1.0, Qt::green);
-    Point[7] = new VertexPoints(-1.0, 1.0, -1.0, Qt::blue);
 }
 
-Cube::~Cube()
+PlanetarySystem::~PlanetarySystem()
 {
-    for(unsigned short i=0; i<8; i++)   delete Point[i];
+    delete sun;
 }
 
-void Cube::initializeGL()
+void PlanetarySystem::initializeGL()
 {
     qglClearColor(Qt::black);
     glShadeModel(GL_SMOOTH);
@@ -40,7 +44,7 @@ void Cube::initializeGL()
     glEnable(GL_CULL_FACE);
 }
 
-void Cube::resizeGL(int width, int height)
+void PlanetarySystem::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -50,18 +54,21 @@ void Cube::resizeGL(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Cube::paintGL()
+void PlanetarySystem::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     draw();
 }
 
-void Cube::mousePressEvent(QMouseEvent *event)
+/*
+void PlanetarySystem::mousePressEvent(QMouseEvent *event)
 {
     lastPos = event->pos();
 }
+*/
 
-void Cube::mouseMoveEvent(QMouseEvent *event)
+/*
+void PlanetarySystem::mouseMoveEvent(QMouseEvent *event)
 {
     GLfloat dx = GLfloat(event->x() - lastPos.x()) / width();
     GLfloat dy = GLfloat(event->y() - lastPos.y()) / height();
@@ -77,6 +84,7 @@ void Cube::mouseMoveEvent(QMouseEvent *event)
     }
     lastPos = event->pos();
 }
+*/
 
 /*
 void Cube::mouseDoubleClickEvent(QMouseEvent *event)
@@ -92,7 +100,7 @@ void Cube::mouseDoubleClickEvent(QMouseEvent *event)
 }
 */
 
-void Cube::draw()
+void PlanetarySystem::draw()
 {
 
 
@@ -103,55 +111,12 @@ void Cube::draw()
     glRotatef(rotationY, 0.0, 1.0, 0.0);
     glRotatef(rotationZ, 0.0, 0.0, 1.0);
 
-    glBegin(GL_QUAD_STRIP);
-        qglColor(Point[3]->color);
-        glVertex3fv(Point[3]->vertex);
-        qglColor(Point[0]->color);
-        glVertex3fv(Point[0]->vertex);
-        qglColor(Point[2]->color);
-        glVertex3fv(Point[2]->vertex);
-        qglColor(Point[1]->color);
-        glVertex3fv(Point[1]->vertex);
+    sun->draw();
 
-        qglColor(Point[6]->color);
-        glVertex3fv(Point[6]->vertex);
-        qglColor(Point[5]->color);
-        glVertex3fv(Point[5]->vertex);
-
-        qglColor(Point[7]->color);
-        glVertex3fv(Point[7]->vertex);
-        qglColor(Point[4]->color);
-        glVertex3fv(Point[4]->vertex);
-
-        qglColor(Point[3]->color);
-        glVertex3fv(Point[3]->vertex);
-        qglColor(Point[0]->color);
-        glVertex3fv(Point[0]->vertex);
-    glEnd();
-
-    glBegin(GL_QUADS);
-        qglColor(Point[7]->color);
-        glVertex3fv(Point[7]->vertex);
-        qglColor(Point[3]->color);
-        glVertex3fv(Point[3]->vertex);
-        qglColor(Point[2]->color);
-        glVertex3fv(Point[2]->vertex);
-        qglColor(Point[6]->color);
-        glVertex3fv(Point[6]->vertex);
-
-        qglColor(Point[0]->color);
-        glVertex3fv(Point[0]->vertex);
-        qglColor(Point[4]->color);
-        glVertex3fv(Point[4]->vertex);
-        qglColor(Point[5]->color);
-        glVertex3fv(Point[5]->vertex);
-        qglColor(Point[1]->color);
-        glVertex3fv(Point[1]->vertex);
-    glEnd();
 
 }
 
-int Cube::faceAtPosition(const QPoint &pos)
+int PlanetarySystem::faceAtPosition(const QPoint &pos)
 {
     const int MaxSize = 512;
     GLuint buffer[MaxSize];
@@ -180,19 +145,4 @@ int Cube::faceAtPosition(const QPoint &pos)
     if (!glRenderMode(GL_RENDER))
         return -1;
     return buffer[3];
-}
-
-
-void Cube::ChangeVertexCoordinates(const double x, const double y, const double z, const int widgetNumber)
-{
-    Point[widgetNumber]->vertex[0] = (GLfloat)x;
-    Point[widgetNumber]->vertex[1] = (GLfloat)y;
-    Point[widgetNumber]->vertex[2] = (GLfloat)z;
-    updateGL();
-}
-
-
-void Cube::ChangeVertexColor(const QColor &color, const int widgetNumber)
-{
-    Point[widgetNumber]->color = color;
 }

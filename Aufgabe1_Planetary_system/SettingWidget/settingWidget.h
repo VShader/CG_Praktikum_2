@@ -1,5 +1,5 @@
-#ifndef VERTEXMANIPULATIONWIDGET_H
-#define VERTEXMANIPULATIONWIDGET_H
+#ifndef SETTINGWIDGET_H
+#define SETTINGWIDGET_H
 
 #include <QWidget>
 #include <QSignalMapper>
@@ -9,32 +9,21 @@
 
 
 namespace Ui {
-    class VertexManipulationWidget;
+    class SettingWidget;
 }
 
 
-class VertexManipulationWidget : public QWidget
+class SettingWidget : public QWidget
 {
     Q_OBJECT
 
 private:
-    Ui::VertexManipulationWidget *ui;
-    QVector<QDoubleSpinBox *> ptrQObject;
-    QDoubleSpinBox *ptrArray[24];
-    void init();
-    void setButtonColor(QToolButton * const button, const QColor &color);
+    Ui::SettingWidget *ui;
 
 public:
-    explicit VertexManipulationWidget(QWidget *parent = NULL);
-    ~VertexManipulationWidget();
+    explicit SettingWidget(QWidget *parent = NULL);
+    ~SettingWidget();
 
-public slots:
-    void setVertexColor();
-    void setVertexCoordiantes();
-
-signals:
-    void vertexCoordinatesChanged(const double x, const double y, const double z, const int widgetNumber);
-    void vertexColorChanged(const QColor &color, const int widgetNumber);
 
 };
 
